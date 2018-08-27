@@ -41,7 +41,7 @@ static void		ft_init(void)
 	ft_init_types(4, 0, 1, 5, 10, 2, 3);
 	ft_init_types(5, 0, 1, 2, 7, 3, 2);
 	ft_init_types(6, 1, 6, 10, 11, 2, 3);
-	ft_init_types(7, 3, 5, 6, 7, 3, 2);
+	ft_init_types(7, 2, 5, 6, 7, 3, 2);
 	ft_init_types(8, 0, 1, 6, 11, 2, 3);
 	ft_init_types(9, 0, 1, 2, 5, 3, 2);
 	ft_init_types(10, 0, 5, 10, 11, 2, 3);
@@ -53,6 +53,40 @@ static void		ft_init(void)
 	ft_init_types(16, 1, 5, 6, 10, 2, 3);
 	ft_init_types(17, 1, 2, 5, 6, 3, 2);
 	ft_init_types(18, 0, 5, 6, 11, 2, 3);
+}
+
+static int		ft_get_limit(int n)
+{
+	if (n < NEWLINE_1)
+		return (NEWLINE_1);
+	if (n < NEWLINE_2)
+		return (NEWLINE_2);
+	if (n < NEWLINE_3)
+		return (NEWLINE_3);
+	return (NEWLINE_4);
+}
+
+static void		ft_update_pos(int type, int pos)
+{
+	int		n;
+
+	n = 0;
+	while (pos--)
+	{
+		n = n + 1;
+		if (n + types[type].size.x - 1 >= ft_get_limit(n))
+			n = ft_get_limit(n) + 1;
+		if (n + ((types[type].size.y - 1) * 5) >= NEWLINE_4)
+		{
+			n = NEWLINE_4 - ((types[type].size.y - 1) * 5) - types[type].size.x;
+			break;
+		}
+	}
+
+	types[type].pos1 += n;
+	types[type].pos2 += n;
+	types[type].pos3 += n;
+	types[type].pos4 += n;
 }
 
 /*
@@ -80,6 +114,12 @@ int				main(int ac, char **av)
 	for (int n = 0 ; n < 4 ; ++ n)
 		for (int i = (5 * n) ; i < (5 * n + 4) ; ++ i)
 			str[i] = '.';
+
+	ft_update_pos(type, pos);
+	str[types[type].pos1] = '#';
+	str[types[type].pos2] = '#';
+	str[types[type].pos3] = '#';
+	str[types[type].pos4] = '#';
 
 	write(1, str, 20);
 	return (0);
